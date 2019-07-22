@@ -51,6 +51,32 @@ const widgetMap = {
 };
 
 
+export function toConstant(schema) {
+  if (Array.isArray(schema.enum) && schema.enum.length === 1) {
+    return schema.enum[0];
+  } else if (schema.hasOwnProperty("const")) {
+    return schema.const;
+  } else {
+    throw new Error("schema cannot be inferred as a constant");
+  }
+}
+
+export function optionsList(schema) {
+  if (schema.enum) {
+    return schema.enum.map((value, i) => {
+      const label = (schema.enumNames && schema.enumNames[i]) || String(value);
+      return { label, value };
+    });
+  } else {
+    const altSchemas = schema.oneOf || schema.anyOf;
+    return altSchemas.map((schema, i) => {
+      const value = toConstant(schema);
+      const label = schema.title || String(value);
+      return { label, value };
+    });
+  }
+}
+
 export function getWidget(schema, widget, registeredWidgets = {}) {
   const { type } = schema;
   console.log("Getting widget:", type, widget)
@@ -67,7 +93,7 @@ export function getWidget(schema, widget, registeredWidgets = {}) {
   //   return Widget.MergedWidget;
   // }
 
-  if (typeof widget === "function" || widget.hasOwnProperty('render')) {
+  if (typeof widget === "function" || (widget instanceof Object && widget.hasOwnProperty('render'))) {
     return widget;
   }
 

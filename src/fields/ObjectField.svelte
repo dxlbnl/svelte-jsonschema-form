@@ -1,4 +1,6 @@
 <script>
+  import { getContext } from 'svelte'
+
   export let schema
   export let uiSchema = {}
   export let errorSchema = {}
@@ -12,7 +14,7 @@
   export let disabled = false
   export let readonly = false
 
-  export let registry
+  const registry = getContext('registry')
   
   // export let registry // Store??
   const isRequired = name => Array.isArray(schema.required) && schema.required.indexOf(name) !== -1
@@ -45,7 +47,6 @@
       formData={formData[name]}
       disabled={disabled}
       readonly={readonly}
-      {registry}
     />
 <!--       onChange={this.onPropertyChange(name)}
       onBlur={onBlur}

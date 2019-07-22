@@ -1,4 +1,5 @@
 <script>
+  import { getContext } from 'svelte'
   import { retrieveSchema } from '../util'
   
   export let schema
@@ -8,18 +9,20 @@
 
   export let formData = undefined
 
+  export let name
   export let id = undefined
   export let displayLabel = undefined
   export let description = undefined
+
   export let required = false
   export let disabled = false
   export let readonly = false
-  export let autofocus = false
+
   export let label = undefined
   export let errors = undefined
   export let help = undefined
 
-  export let registry
+  const registry = getContext('registry')
 
   const COMPONENT_TYPES = {
     array: "ArrayField",
@@ -45,13 +48,13 @@
   {/if}
 
   <svelte:component
+    {name}
     this={getField(schema)}
     schema={retrieveSchema(schema)}
     uiSchema={{ ...uiSchema, classNames: undefined }}
     {id}
     {displayLabel}
-    {disabled} {readonly} {autofocus}
-    {registry}
+    {disabled} {readonly}
   />
 
   {#if errors}

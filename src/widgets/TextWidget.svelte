@@ -10,7 +10,7 @@
 </script>
 
 <BaseInput
-  {value},
+  {value}
   {readonly} {disabled}
   {...inputProps}
 />
