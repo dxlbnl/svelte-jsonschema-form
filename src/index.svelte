@@ -25,7 +25,7 @@
 <h1>Form</h1>
 
 <form on:submit>
-  <SchemaField {schema} {uiSchema} {idSchema} {formData} />
+  <SchemaField {schema} {uiSchema} {idSchema} bind:formData />
 
   <slot>
     <button type="submit">

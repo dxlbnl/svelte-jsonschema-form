@@ -1,7 +1,7 @@
 <script>
   export let schema
 
-  export let value
+  export let value = false
   export let id
   export let readonly
   export let disabled
@@ -19,7 +19,7 @@
     <input
       type="checkbox"
       {id}
-      checked={typeof value === "undefined" ? false : value}
+      bind:checked={value}
       {required}
       disabled={disabled || readonly}
     />

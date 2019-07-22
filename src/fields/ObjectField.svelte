@@ -44,7 +44,7 @@
       uiSchema={uiSchema[name]}
       errorSchema={errorSchema[name]}
       idSchema={idSchema[name]}
-      formData={formData[name]}
+      bind:formData={formData[name]}
       disabled={disabled}
       readonly={readonly}
     />

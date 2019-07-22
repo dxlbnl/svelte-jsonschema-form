@@ -39,7 +39,7 @@
   {schema}
   id={idSchema && idSchema.$id}
   label={schema.title === undefined ? name : schema.title}
-  value={formData}
+  bind:value={formData}
   {required}
   {disabled}
   {readonly}

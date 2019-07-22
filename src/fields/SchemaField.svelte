@@ -55,6 +55,7 @@
     {id}
     {displayLabel}
     {disabled} {readonly}
+    bind:formData
   />
 
   {#if errors}
