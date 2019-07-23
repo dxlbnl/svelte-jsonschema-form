@@ -3,8 +3,8 @@
   import { toIdSchema } from './util'
   import SchemaField from './fields/SchemaField.svelte'
 
-  import * as fields from './fields/index'
-  import * as widgets from './widgets/index'
+  import * as fields from './fields'
+  import * as widgets from './widgets'
 
   export let schema
   export let uiSchema = {}
