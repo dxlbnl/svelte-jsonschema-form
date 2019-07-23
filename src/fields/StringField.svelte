@@ -10,6 +10,8 @@
   export let formData = ''
 
   export let name
+  export let id
+  export let displayLabel
 
   export let required = false
   export let disabled = false

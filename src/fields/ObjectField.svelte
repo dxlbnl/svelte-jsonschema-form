@@ -9,6 +9,8 @@
   export let formData = {}
 
   export let name
+  export let id
+  export let displayLabel
 
   export let required = false
   export let disabled = false
@@ -34,7 +36,7 @@
     </legend>
   {/if}
   
-  <!-- <p>DescriptionField</p> -->
+  <p>DescriptionField</p>
 
   {#each Object.keys(schema.properties) as name}
     <SchemaField
