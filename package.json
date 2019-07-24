@@ -9,6 +9,8 @@
   },
   "devDependencies": {
     "rollup": "^1.11.0",
+    "rollup-plugin-commonjs": "^10.0.1",
+    "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-svelte": "^5.0.0",
     "svelte": "^3.0.0"
@@ -21,7 +23,7 @@
     "index.mjs",
     "index.js"
   ],
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
     "ajv": "^6.10.2",
     "lodash.topath": "^4.5.2"

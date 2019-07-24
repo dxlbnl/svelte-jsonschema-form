@@ -43,11 +43,15 @@
     errors = validated.errors
     errorSchema = validated.errorSchema
   }
-
-  setContext('registry', registry)
-
   $: idSchema = toIdSchema(schema, uiSchema["ui:rootFieldId"], schema.definitions)
 
+  $: {
+    console.log("debug:", {
+      schema, formData, edit
+    })
+  }
+
+  setContext('registry', registry)
 
   function validate (formData, schema) {
     return validateFormData(
