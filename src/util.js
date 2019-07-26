@@ -50,17 +50,6 @@ const widgetMap = {
   },
 };
 
-
-export function toConstant(schema) {
-  if (Array.isArray(schema.enum) && schema.enum.length === 1) {
-    return schema.enum[0];
-  } else if (schema.hasOwnProperty("const")) {
-    return schema.const;
-  } else {
-    throw new Error("schema cannot be inferred as a constant");
-  }
-}
-
 export function optionsList(schema) {
   if (schema.enum) {
     return schema.enum.map((value, i) => {
@@ -157,6 +146,85 @@ export function retrieveSchema(schema, definitions = {}) {
   return { ...$refSchema, ...localSchema };
 }
 
+function computeDefaults(schema, parentDefaults, definitions = {}) {
+  // Compute the defaults recursively: give highest priority to deepest nodes.
+  let defaults = parentDefaults;
+  if (isObject(defaults) && isObject(schema.default)) {
+    // For object defaults, only override parent defaults that are defined in
+    // schema.default.
+    defaults = mergeObjects(defaults, schema.default);
+  } else if ("default" in schema) {
+    // Use schema defaults for this node.
+    defaults = schema.default;
+  } else if ("$ref" in schema) {
+    // Use referenced schema defaults for this node.
+    const refSchema = findSchemaDefinition(schema.$ref, definitions);
+    return computeDefaults(refSchema, defaults, definitions);
+  } else if (isFixedItems(schema)) {
+    defaults = schema.items.map(itemSchema =>
+      computeDefaults(itemSchema, undefined, definitions)
+    );
+  }
+  // Not defaults defined for this node, fallback to generic typed ones.
+  if (typeof defaults === "undefined") {
+    defaults = schema.default;
+  }
+
+  switch (schema.type) {
+    // We need to recur for object schema inner default values.
+    case "object":
+      return Object.keys(schema.properties || {}).reduce((acc, key) => {
+        // Compute the defaults for this node, with the parent defaults we might
+        // have from a previous run: defaults[key].
+        acc[key] = computeDefaults(
+          schema.properties[key],
+          (defaults || {})[key],
+          definitions
+        );
+        return acc;
+      }, {});
+
+    case "array":
+      if (schema.minItems) {
+        if (!isMultiSelect(schema, definitions)) {
+          const defaultsLength = defaults ? defaults.length : 0;
+          if (schema.minItems > defaultsLength) {
+            const defaultEntries = defaults || [];
+            // populate the array with the defaults
+            const fillerEntries = new Array(
+              schema.minItems - defaultsLength
+            ).fill(
+              computeDefaults(schema.items, schema.items.defaults, definitions)
+            );
+            // then fill up the rest with either the item default or empty, up to minItems
+
+            return defaultEntries.concat(fillerEntries);
+          }
+        } else {
+          return [];
+        }
+      }
+  }
+  return defaults;
+}
+
+export function getDefaultFormState(_schema, formData, definitions = {}) {
+  if (!isObject(_schema)) {
+    throw new Error("Invalid schema: " + _schema);
+  }
+  const schema = retrieveSchema(_schema, definitions);
+  const defaults = computeDefaults(schema, _schema.default, definitions);
+  if (typeof formData === "undefined") {
+    // No form data? Use schema defaults.
+    return defaults;
+  }
+  if (isObject(formData)) {
+    // Override schema defaults with form data.
+    return mergeObjects(defaults, formData);
+  }
+  return formData || defaults;
+}
+
 export function getUiOptions(uiSchema) {
   // get all passed options from ui:widget, ui:options, and ui:<optionName>
   return Object.keys(uiSchema)
@@ -222,4 +290,68 @@ export function toIdSchema(schema, id, definitions) {
     idSchema[name] = toIdSchema(field, fieldId, definitions);
   }
   return idSchema;
+}
+
+/**
+ * This function checks if the given schema matches a single
+ * constant value.
+ */
+export function isConstant(schema) {
+  return (
+    (Array.isArray(schema.enum) && schema.enum.length === 1) ||
+    schema.hasOwnProperty("const")
+  );
+}
+
+export function toConstant(schema) {
+  if (Array.isArray(schema.enum) && schema.enum.length === 1) {
+    return schema.enum[0];
+  } else if (schema.hasOwnProperty("const")) {
+    return schema.const;
+  } else {
+    throw new Error("schema cannot be inferred as a constant");
+  }
+}
+
+export function isSelect(_schema, definitions = {}) {
+  const schema = retrieveSchema(_schema, definitions);
+  const altSchemas = schema.oneOf || schema.anyOf;
+  if (Array.isArray(schema.enum)) {
+    return true;
+  } else if (Array.isArray(altSchemas)) {
+    return altSchemas.every(altSchemas => isConstant(altSchemas));
+  }
+  return false;
+}
+
+export function isMultiSelect(schema, definitions = {}) {
+  if (!schema.uniqueItems || !schema.items) {
+    return false;
+  }
+  return isSelect(schema.items, definitions);
+}
+
+export function isFilesArray(schema, uiSchema, definitions = {}) {
+  if (uiSchema["ui:widget"] === "files") {
+    return true;
+  } else if (schema.items) {
+    const itemsSchema = retrieveSchema(schema.items, definitions);
+    return itemsSchema.type === "string" && itemsSchema.format === "data-url";
+  }
+  return false;
+}
+
+export function isFixedItems(schema) {
+  return (
+    Array.isArray(schema.items) &&
+    schema.items.length > 0 &&
+    schema.items.every(item => isObject(item))
+  );
+}
+
+export function allowAdditionalItems(schema) {
+  if (schema.additionalItems === true) {
+    console.warn("additionalItems=true is currently not supported");
+  }
+  return isObject(schema.additionalItems);
 }

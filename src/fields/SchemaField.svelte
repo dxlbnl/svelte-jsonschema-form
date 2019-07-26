@@ -14,7 +14,7 @@
 
   export let formData = undefined
 
-  export let name
+  export let name = null
   export let id = undefined
   export let displayLabel = undefined
 

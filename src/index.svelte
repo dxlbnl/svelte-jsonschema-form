@@ -3,6 +3,7 @@
   import { toIdSchema } from './util'
   import SchemaField from './fields/SchemaField.svelte'
   import { showDebug } from './components/Debug.svelte'
+  import ArrayFieldTemplate from './components/ArrayFieldTemplate.svelte'
   import ErrorList from './components/FormErrorList.svelte'
 
   import validateFormData from './validate'
