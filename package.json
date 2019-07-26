@@ -26,6 +26,7 @@
   "version": "0.0.2",
   "dependencies": {
     "ajv": "^6.10.2",
-    "lodash.topath": "^4.5.2"
+    "lodash.topath": "^4.5.2",
+    "rollup-plugin-node-resolve": "^5.2.0"
   }
 }
