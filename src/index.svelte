@@ -37,6 +37,10 @@
 
   let errors = [], errorSchema = []
 
+  $: {
+    registry.definitions = schema.definitions
+  }
+
   $: edit = typeof formData !== 'undefined'
   $: if (formData && edit && !noValidate && liveValidate) {
     console.log("Validating")
@@ -45,12 +49,6 @@
     errorSchema = validated.errorSchema
   }
   $: idSchema = toIdSchema(schema, uiSchema["ui:rootFieldId"], schema.definitions)
-
-  $: {
-    console.log("debug:", {
-      schema, formData, edit
-    })
-  }
 
   setContext('registry', registry)
 

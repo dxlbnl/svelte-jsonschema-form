@@ -4,9 +4,10 @@
   import Help from './Help.svelte'
 
   import Debug from './Debug.svelte'
+  let className = ''
 
   export let id
-  export let classnames = ''
+  export { className as class }
   export let label
   export let errors
   export let help
@@ -23,7 +24,7 @@
 }} />
 
 {#if !hidden}
-  <div class={classnames}>
+  <div class={className}>
     {#if displayLabel}
       <Label {label} {required} {id} />
       {#if description}

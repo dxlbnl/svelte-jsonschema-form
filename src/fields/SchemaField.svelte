@@ -2,12 +2,15 @@
   import { getContext } from 'svelte'
 
   import Debug from '../components/Debug.svelte'
-
-  import { retrieveSchema, getUiOptions } from '../util'
-  
   import FieldTemplate from '../components/FieldTemplate.svelte'
 
-  export let schema
+  import {
+    retrieveSchema, getUiOptions,
+    isMultiSelect, isFilesArray,
+  } from '../util'
+  
+  let _schema
+  export { _schema as schema }
   export let uiSchema = {}
   export let errorSchema = {}
   export let idSchema = {}
@@ -38,8 +41,8 @@
     string: "StringField",
   }
 
+  $: schema = retrieveSchema(_schema, registry.definitions)
   $: description = uiSchema["ui:description"] || schema.description
-
   function getField(schema) {
     return registry.fields[COMPONENT_TYPES[schema.type]] || registry.fields.UnsupportedField 
   }
@@ -47,11 +50,11 @@
   function mustDisplayLabel(schema, uiSchema) {
     const uiOptions = getUiOptions(uiSchema);
     let { label: displayLabel = true } = uiOptions;
-    // if (schema.type === "array") {
-    //   displayLabel =
-    //     isMultiSelect(schema, definitions) ||
-    //     isFilesArray(schema, uiSchema, definitions);
-    // }
+    if (schema.type === "array") {
+      displayLabel =
+        isMultiSelect(schema, registry.definitions) ||
+        isFilesArray(schema, uiSchema, registry.definitions);
+    }
     if (schema.type === "object") {
       displayLabel = false;
     }
@@ -61,8 +64,6 @@
     if (uiSchema["ui:field"]) {
       displayLabel = false;
     }
-
-    console.log("DisplayLabel:", schema, displayLabel)
     return displayLabel
   }
 
@@ -84,7 +85,7 @@
   <svelte:component
     {name}
     this={getField(schema)}
-    schema={retrieveSchema(schema)}
+    {schema}
     uiSchema={{ ...uiSchema, classNames: undefined }}
     {id}
     {displayLabel}

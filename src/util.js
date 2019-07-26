@@ -68,7 +68,6 @@ export function optionsList(schema) {
 
 export function getWidget(schema, widget, registeredWidgets = {}) {
   const { type } = schema;
-  console.log("Getting widget:", type, widget)
 
   // function mergeOptions(Widget) {
   //   // cache return value as property of widget for proper react reconciliation
@@ -87,7 +86,7 @@ export function getWidget(schema, widget, registeredWidgets = {}) {
   }
 
   if (typeof widget !== "string") {
-    console.log("Error vGetting widget:", type, widget)
+    console.log("Error getting widget:", type, widget)
 
     throw new Error(`Unsupported widget definition: ${typeof widget}`);
   }
@@ -104,7 +103,6 @@ export function getWidget(schema, widget, registeredWidgets = {}) {
   if (widgetMap[type].hasOwnProperty(widget)) {
     const widgetName = widgetMap[type][widget]
     const registeredWidget = registeredWidgets[widgetName];
-    console.log("Getting widget", widgetName, registeredWidget)
     return getWidget(schema, registeredWidget, registeredWidgets);
   }
 
