@@ -8,6 +8,10 @@
   export let required
   export let readonly
   export let disabled
+
+  $: if (value === undefined) {
+    value = ''
+  }
 </script>
 
 <BaseInput

@@ -9,8 +9,6 @@
     isMultiSelect, isFilesArray,
   } from '../util'
   
-  let _schema
-  export { _schema as schema }
   export let uiSchema = {}
   export let errorSchema = {}
   export let idSchema = {}
@@ -28,6 +26,9 @@
   export let errors = undefined
   export let help = undefined
 
+  let _schema
+  export { _schema as schema }
+  
   let label = undefined
 
   const registry = getContext('registry')
@@ -64,9 +65,11 @@
     if (uiSchema["ui:field"]) {
       displayLabel = false;
     }
+    console.log("displayLabel?", schema, uiSchema, uiOptions, displayLabel)
     return displayLabel
   }
 
+  $: displayLabel = mustDisplayLabel(schema, uiSchema)
 </script>
 
 <Debug title=schemaField data={{
@@ -79,7 +82,7 @@
   {required} {readonly}
   {help} {errors}
   {description}
-  displayLabel={mustDisplayLabel(schema, uiSchema)}
+  {displayLabel}
   hidden={uiSchema["ui:widget"] === "hidden"} 
 >
   <svelte:component

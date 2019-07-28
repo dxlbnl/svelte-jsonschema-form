@@ -20,13 +20,14 @@
   export let disabled 
   export let required
 
-  export let classname = ''
+  let className = ''
+  export { className as class }
   export let items
 
   let canAdd = true
 </script>
 
-<fieldset class={classname}>
+<fieldset class={className}>
   <ArrayFieldTitle
     {idSchema}
     title={uiSchema["ui:title"] || title}

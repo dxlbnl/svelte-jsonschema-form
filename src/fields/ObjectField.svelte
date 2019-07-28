@@ -38,7 +38,7 @@
   
   <p>DescriptionField</p>
 
-  {#each Object.keys(schema.properties) as name}
+  {#each Object.keys(schema.properties) as name (name) }
     <SchemaField
       {name}
       required={isRequired(name)}
