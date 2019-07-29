@@ -223,6 +223,47 @@ export function getDefaultFormState(_schema, formData, definitions = {}) {
   return formData || defaults;
 }
 
+export function orderProperties(properties, order) {
+  if (!Array.isArray(order)) {
+    return properties;
+  }
+
+  const arrayToHash = arr =>
+    arr.reduce((prev, curr) => {
+      prev[curr] = true;
+      return prev;
+    }, {});
+  const errorPropList = arr =>
+    arr.length > 1
+      ? `properties '${arr.join("', '")}'`
+      : `property '${arr[0]}'`;
+  const propertyHash = arrayToHash(properties);
+  const orderHash = arrayToHash(order);
+  const extraneous = order.filter(prop => prop !== "*" && !propertyHash[prop]);
+  if (extraneous.length) {
+    throw new Error(
+      `uiSchema order list contains extraneous ${errorPropList(extraneous)}`
+    );
+  }
+  const rest = properties.filter(prop => !orderHash[prop]);
+  const restIndex = order.indexOf("*");
+  if (restIndex === -1) {
+    if (rest.length) {
+      throw new Error(
+        `uiSchema order list does not contain ${errorPropList(rest)}`
+      );
+    }
+    return order;
+  }
+  if (restIndex !== order.lastIndexOf("*")) {
+    throw new Error("uiSchema order list contains more than one wildcard item");
+  }
+
+  const complete = [...order];
+  complete.splice(restIndex, 1, ...rest);
+  return complete;
+}
+
 export function getUiOptions(uiSchema) {
   // get all passed options from ui:widget, ui:options, and ui:<optionName>
   return Object.keys(uiSchema)

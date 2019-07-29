@@ -7,13 +7,14 @@
 
 <div class="row">
   <p class="col-xs-3 col-xs-offset-9 array-item-add text-right">
-    <IconBtn
+    <button on:click {disabled}> + </button>
+<!--     <IconBtn
       type="info"
       icon="plus"
       class="btn-add col-xs-12"
       tabIndex="0"
       on:click
       {disabled}
-    />
+    /> -->
   </p>
 </div>

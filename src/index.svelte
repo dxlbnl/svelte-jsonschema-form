@@ -2,7 +2,7 @@
   import { setContext } from 'svelte'
   import { toIdSchema } from './util'
   import SchemaField from './fields/SchemaField.svelte'
-  import { showDebug } from './components/Debug.svelte'
+  import Debug, { showDebug } from './components/Debug.svelte'
   import ArrayFieldTemplate from './components/ArrayFieldTemplate.svelte'
   import ErrorList from './components/FormErrorList.svelte'
 
@@ -65,6 +65,10 @@
 
 <h1>Form</h1>
 <label>debug</label><input type=checkbox bind:checked={$showDebug} />
+<Debug title=Form data={{
+  idSchema,
+  props: $$props
+}} />
 
 <form on:submit
   {id} {name}

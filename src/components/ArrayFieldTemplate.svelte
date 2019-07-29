@@ -25,6 +25,8 @@
   export let items
 
   let canAdd = true
+
+  $: description = uiSchema["ui:description"] || schema.description
 </script>
 
 <fieldset class={className}>
@@ -34,11 +36,7 @@
     {required}
   />
 
-  {#if uiSchema["ui:description"] || schema.description}
-    <ArrayFieldDescription {idSchema}>
-      {uiSchema["ui:description"] || schema.description}
-    </ArrayFieldDescription>
-  {/if}
+  <ArrayFieldDescription {idSchema} {description} />
 
   <div class="row array-item-list">
     {#if items}

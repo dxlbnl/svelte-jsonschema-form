@@ -65,7 +65,7 @@
     if (uiSchema["ui:field"]) {
       displayLabel = false;
     }
-    console.log("displayLabel?", schema, uiSchema, uiOptions, displayLabel)
+    // console.log("displayLabel?", schema, uiSchema, uiOptions, displayLabel)
     return displayLabel
   }
 
@@ -73,7 +73,7 @@
 </script>
 
 <Debug title=schemaField data={{
-  name, formData, id, displayLabel
+  name, formData, id, displayLabel, idSchema
 }}/>
 
 <FieldTemplate
@@ -91,7 +91,6 @@
     {schema}
     uiSchema={{ ...uiSchema, classNames: undefined }}
     {id}
-    {displayLabel}
     {disabled} {readonly}
     bind:formData
   />
