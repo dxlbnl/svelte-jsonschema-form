@@ -70,10 +70,11 @@
   }
 
   $: displayLabel = mustDisplayLabel(schema, uiSchema)
+
 </script>
 
 <Debug title=schemaField data={{
-  name, formData, id, displayLabel, idSchema
+  name, formData, id, displayLabel, idSchema, props: $$props
 }}/>
 
 <FieldTemplate
@@ -85,10 +86,11 @@
   {displayLabel}
   hidden={uiSchema["ui:widget"] === "hidden"} 
 >
+  <!-- Something with props -->
   <svelte:component
     {name}
     this={getField(schema)}
-    {schema}
+    {schema} {errorSchema} {idSchema}
     uiSchema={{ ...uiSchema, classNames: undefined }}
     {id}
     {disabled} {readonly}

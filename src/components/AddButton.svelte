@@ -7,7 +7,7 @@
 
 <div class="row">
   <p class="col-xs-3 col-xs-offset-9 array-item-add text-right">
-    <button on:click {disabled}> + </button>
+    <button type=button on:click {disabled}> + </button>
 <!--     <IconBtn
       type="info"
       icon="plus"

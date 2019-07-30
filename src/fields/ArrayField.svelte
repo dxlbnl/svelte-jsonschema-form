@@ -2,7 +2,7 @@
   import { getContext } from 'svelte'
 
   import {
-    retrieveSchema, toIdSchema, getDefaultFormState,
+    getDefaultFormState,
     isFixedItems, allowAdditionalItems
   } from '../util'
   import ArrayFieldTemplate from '../components/ArrayFieldTemplate.svelte'
@@ -27,30 +27,35 @@
   const { definitions } = registry
 
   $: title = schema.title || name
-  $: items = formData.map((item, index) => {
-    const itemsSchema = retrieveSchema(schema.items, definitions);
-    const itemErrorSchema = errorSchema ? errorSchema[index] : undefined;
-    const itemIdPrefix = idSchema.$id + "_" + index;
-    const itemIdSchema = toIdSchema(itemsSchema, itemIdPrefix, definitions);
-    return {
-      index,
-      canMoveUp: index > 0,
-      canMoveDown: index < formData.length - 1,
-      schema: itemsSchema,
-      idSchema: itemIdSchema,
-      errorSchema: itemErrorSchema,
-      uiSchema: uiSchema.items,
-    }
-  })
 
   function onAdd() {
     const itemSchema = (isFixedItems(schema) && allowAdditionalItems(schema)) ? schema.allowAdditionalItems : schema.items
     formData = [...formData, getDefaultFormState(itemSchema, undefined, definitions)]
   }
+
+  function onDelete (event) {
+    event.stopPropagation()
+    const index = event.detail
+
+    formData = formData.filter((_, i) => i !== index)
+  }
+
+  function onReorder (event) {
+    event.stopPropagation()
+    const [from, to] = event.detail
+
+    formData = formData.map((item, i, array) => (
+      (i === from)
+        ? array[to]
+        : (i === to)
+          ? array[from]
+          : item
+    ))
+  }
 </script>
 
 <Debug title=ArrayField data={{
-  name, schema, formData, items
+  name, schema, formData, uiSchema
 }} />
 
 <!-- 
@@ -59,8 +64,9 @@
 
 <ArrayFieldTemplate
   bind:formData
-  {schema} {idSchema} {uiSchema}
+  {schema} {idSchema} {uiSchema} {errorSchema}
   {title} {required} {disabled} {readonly}
-  {items}
   on:add-item={onAdd}
+  on:delete-item={onDelete}
+  on:reorder-item={onReorder}
 />

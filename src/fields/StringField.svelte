@@ -6,6 +6,7 @@
   export let schema
   export let uiSchema = {}
   export let idSchema = {}
+  export let errorSchema = {}
 
   export let formData = ''
 
